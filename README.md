@@ -1,6 +1,7 @@
 To deploy to Github Pages, run `npm run deploy`. To run development build, run `npm start`.
 
 # Image DFT
+You can use the **image-dft** tool here: [sam767t.github.io/image-dft/](sam767t.github.io/image-dft/)
 
 Below are some basic notes on the DFT and 2D variant in particular. You should not attempt to learn about the DFT from scratch using this document.
 

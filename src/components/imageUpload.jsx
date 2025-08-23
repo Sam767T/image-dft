@@ -168,7 +168,7 @@ function ImageUpload() {
           <img src={image} alt="Uploaded" style={{ width: "400px" }} />
           <br />
           <h3>View DFT</h3>
-          Alpha =
+          Scaling factor =
           <input
             type="number"
             value={alpha}

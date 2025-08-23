@@ -27,6 +27,9 @@ function normaliseArray(arr) {
 
 function ImageUpload() {
   const [image, setImage] = useState(null);
+  const [alpha, setAlpha] = useState(1);
+  const [magSqrt, setMagSqrt] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const canvasRef = useRef(null);
   
   const handleImageUpload = (e) => {
@@ -37,6 +40,7 @@ function ImageUpload() {
   };
 
   const manipulateImage = () => {
+    setIsLoading(true);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     const img = new window.Image();
@@ -47,14 +51,6 @@ function ImageUpload() {
       ctx.drawImage(img, 0, 0);
       const imageData = ctx.getImageData(0, 0, img.width, img.height);
       const data = imageData.data;
-
-      // Example: invert colors
-    //   for (let i = 0; i < data.length; i += 4) {
-    //     data[i] = 255 - data[i];     // Red
-    //     data[i + 1] = 255 - data[i + 1]; // Green
-    //     data[i + 2] = 255 - data[i + 2]; // Blue
-    //     // data[i + 3] is alpha
-    //   }
       
       for (let i = 0; i < data.length; i += 4) {
         let avg = (data[i] + data[i + 1] + data[i + 2])/3;
@@ -84,7 +80,7 @@ function ImageUpload() {
         }
       }
 
-      // Vertical DFT
+      // Vertical DFT from output of horizontal DFT
       stride = img.width;
       for (let c = 0; c < img.width; c += 1) {
         let signalReal = [];
@@ -106,26 +102,54 @@ function ImageUpload() {
       let mag = []; // Magnitude
       for (let j = 0; j < Xreal.length; j += 1) {
         let m = Math.sqrt(Xreal[j]*Xreal[j] + Ximag[j]*Ximag[j]);
-        m = Math.sqrt(m)
+        if (magSqrt) {
+          m = Math.sqrt(m)
+        }
         mag.push(Math.round(m));
       }
 
       let magn = normaliseArray(mag);
-      console.log(magn)
+      let switchH = new Array(magn.length).fill(0);
+      let out = new Array(magn.length).fill(0);
 
-      for (let i = 0, j = 0; i < data.length; i += 4, j += 1) {
-        let pix = Math.round(magn[j]); // Magnitude
-        data[i] = pix;
-        data[i + 1] = pix;
-        data[i + 2] = pix;
-        console.log(pix)
+      // Rearrange quadrants
+      let halfWidth = Math.floor(img.width / 2);
+      for (let r = 0; r < img.height; r += 1) {
+        for (let c = 0; c < img.width; c += 1) {
+          let i = (r * stride) + c;
+          let j = 0;
+          if (c >= halfWidth) {
+            j = (r * stride) + c - halfWidth;
+          } else {
+            j = (r * stride) + c + halfWidth;
+          }
+          switchH[i] = magn[j];
+        }
+      }
+
+      let halfHeight = Math.floor(img.height / 2);
+      for (let c = 0; c < img.width; c += 1) {
+        for (let r = 0; r < img.height; r += 1) {
+          let i = (r * stride) + c;
+          let j = 0;
+          if (r >= halfHeight) {
+            j = ((r - halfHeight) * stride) + c;
+          } else {
+            j = ((r + halfHeight) * stride) + c;
+          }
+          out[i] = switchH[j];
+        }
       }
 
       
-      //let signal = [1,0,1,0];
-      //var phasors = fft(signal);
-      //console.log(phasors);
-
+      // Write magnitude response to canvas
+      for (let i = 0, j = 0; i < data.length; i += 4, j += 1) {
+        let pix = Math.round(alpha * out[j]); // Magnitude
+        data[i] = pix;
+        data[i + 1] = pix;
+        data[i + 2] = pix;
+      }
+      setIsLoading(false);
 
       ctx.putImageData(imageData, 0, 0);
     };
@@ -133,17 +157,34 @@ function ImageUpload() {
 
   return (
     <div>
-      <h2>Upload and View Image</h2>
+      <h3>Upload and View Image</h3>
       <input type="file" accept="image/*" onChange={handleImageUpload} />
 
       {/* Show the image if it has been uploaded */}
       {image && (
         <div>
-          <img src={image} alt="Uploaded" style={{ maxWidth: "500px" }} />
+          <img src={image} alt="Uploaded" style={{ width: "400px" }} />
           <br />
-          <button onClick={manipulateImage}>Invert Colors</button>
+          <h3>View DFT</h3>
+          Alpha =
+          <input
+            type="number"
+            value={alpha}
+            min={0}
+            style={{ width: "40px" }}
+            onChange={e => setAlpha(Number(e.target.value))}
+          />
+          Show SQRT of Magnitude
+          <input
+            type="checkbox"
+            checked={magSqrt}
+            onChange={e => setMagSqrt(e.target.checked)}
+          />
+          <button onClick={manipulateImage}>Show DFT</button>
+
           <br />
-          <canvas ref={canvasRef} style={{ marginTop: "1rem", maxWidth: "500px" }} />
+          {isLoading && (<p>Calculating...</p>)}
+          <canvas ref={canvasRef} style={{ marginTop: "1rem", width: "400px" }} />
         </div>
       )}
     </div>

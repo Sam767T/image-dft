@@ -1,70 +1,35 @@
-# Getting Started with Create React App
+#### To deploy to Github Pages, run ```npm run deploy```
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Image DFT
+Below are some basic notes on the DFT and 2D variant in particular. You should not attempt to learn about the DFT from scratch using this document.
 
-## Available Scripts
+## Discrete Fourier Transform (DFT)
+The DFT transforms a discrete signal $x[n]$ into a discrete frequency spectrum $X[k]$. Mathematically, it is defined as:
+$$
+\begin{equation*}
+    \begin{split}
+        X[k] &= \sum_{n=0}^{N-1} x[n]e^{-j\frac{2\pi kn}{N}} \\
+            &= \sum_{n=0}^{N-1} x[n] \left( cos(\frac{-2\pi kn}{N}) + j sin (\frac{-2\pi kn}{N}) \right)
+    \end{split}
+\end{equation*}
+$$
 
-In the project directory, you can run:
+Where:
+- $x[n]$ is the value of an input signal at coordinate $n$
+- $X[k]$ is the $k^{th}$ frequency bin of the spectrum
+- $N$ is the length of $x[n]$ (and $X[k]$)
+- $j$ is the imaginary unit $(j = \sqrt{-1})$
 
-### `npm start`
+From $X[k]$, the magnitude $|X[k]|$ and phase $\angle X[k]$ responses can be calculated. The former shows which frequencies are present in a signal, whilst the former indicates the phase delay of each frequency bin.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Only the magnitude response $|X[k]| = \sqrt{\Re(X[k])^2+\Im(X[k])^2}$ is shown on **image-dft**.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Interpretation of the DFT
+In one dimension, $x[n]$ will typically represent a sampled time signal (e.g. an audio signal). If the corresponsing DFT $X[k]$ exhibits relatively large amplitudes in the lowest frequency bins, then low frequencies are dominant in the audio signal.
 
-### `npm test`
+A DFT is double-sided (or mirrored), so one half of the DFT will be a reflection of the other. The lowest frequency bin $X[0]$ represents DC gain and is the only bin which is not mirrored.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 2D DFT
+Whilst a 1D signal is typically an audio signal in DSP, a 2D signal is typically realised as an image. A 2D DFT is simply a 1D DFT performed in both directions (vertical and horizontal, one after the other), since the DFT has the property of being separable.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Just like in the 1D DFT, if most frequency content is near the origin in the 2D frequency plane, then it can be said that spatial low frequencies dominate the image.

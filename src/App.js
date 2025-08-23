@@ -3,9 +3,7 @@ import ImageUpload from "./components/imageUpload";
 function App() {
   return (
     <>
-      <p>
-        Image DFT
-      </p>
+      <h1>Image DFT</h1>
       <ImageUpload />
     </>
   );

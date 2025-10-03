@@ -159,7 +159,7 @@ function ImageUpload() {
     <div>
       <h3>Upload and View Image</h3>
       <p><b>Note:</b> Images are not sent to any server - all processing is done locally in JS.</p>
-      <p>Images larger than ~600x600px are unlikely to work in this current version.</p>
+      <p>Images larger than ~600x600px are unlikely to work with this non-FFT version.</p>
       <input type="file" accept="image/*" onChange={handleImageUpload} />
 
       {/* Show the image if it has been uploaded */}

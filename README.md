@@ -12,8 +12,8 @@ The DFT transforms a discrete signal $x[n]$ into a discrete frequency spectrum $
 ```math
 \begin{equation*}
     \begin{split}
-        X[k] &= \sum_{n=0}^{N-1} x[n]e^{-j\frac{2\pi kn}{N}} \\
-            &= \sum_{n=0}^{N-1} x[n] \left( cos(\frac{-2\pi kn}{N}) + j sin (\frac{-2\pi kn}{N}) \right)
+        X[k] &= \sum_{n=0}^{N-1} x[n] \cdot e^{-j\frac{2\pi kn}{N}} \\
+            &= \sum_{n=0}^{N-1} x[n] \cdot \left[ cos\left(\frac{-2\pi kn}{N}\right) + j sin \left(\frac{-2\pi kn}{N}\right)  \right]
     \end{split}
 \end{equation*}
 ```
@@ -25,7 +25,7 @@ Where:
 - $N$ is the length of $x[n]$ (and $X[k]$)
 - $j$ is the imaginary unit $(j = \sqrt{-1})$
 
-From $X[k]$, the magnitude $|X[k]|$ and phase $\angle X[k]$ responses can be calculated. The former shows which frequencies are present in a signal, whilst the former indicates the phase delay of each frequency bin.
+From $X[k]$, the magnitude $|X[k]|$ and phase $\angle X[k]$ responses can be calculated. The former shows which frequencies are present in a signal, whilst the latter indicates the phase delay of each frequency bin.
 
 Only the magnitude response $|X[k]| = \sqrt{\Re(X[k])^2+\Im(X[k])^2}$ is shown on **image-dft**.
 
